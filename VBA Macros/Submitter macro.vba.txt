@@ -1,0 +1,139 @@
+'   Herman Chin
+'   Submitter macro
+'
+'   Description: This macro grabs the submitters from the nominee sheet and generates a report for the manager
+'
+
+Sub SubmitterMacro()
+'
+' Macro1 Macro
+'
+    Sheets("Submitters").Activate
+    Cells(1, 3).EntireColumn.ClearContents
+    Cells(1, 5).EntireColumn.ClearContents
+    Cells(1, 7).EntireColumn.ClearContents
+    Cells(1, 9).EntireColumn.ClearContents
+    Cells(1, 11).EntireColumn.ClearContents
+    Cells(1, 13).EntireColumn.ClearContents
+    Dim groupname As String
+    Dim qtr As String
+    Dim nomlist As Range
+    Dim grouplist As Range
+    Dim qtrlist As Range
+    Dim subA As Range, subD As Range, subF As Range, subH As Range, subJ As Range, subL As Range, subN As Range
+    
+    Set grouplist = Sheets("Nominee Info").Range("D2", Sheets("Nominee Info").Range("D65536").End(xlUp))
+    Set nomlist = Sheets("Nominee Info").Range("C2", Sheets("Nominee Info").Range("C65536").End(xlUp))
+    Set qtrlist = Sheets("Nominee Info").Range("J2", Sheets("Nominee Info").Range("J65536").End(xlUp))
+    Set subA = Range("B8", "B1370")
+    Set subD = Range("D8", "D1370")
+    Set subH = Range("H8", "H1370")
+    Set subJ = Range("J8", "J1370")
+    Set subL = Range("L8", "L1370")
+    Set subN = Range("N8", "N1370")
+    
+    groupname = Cells(2, 1).Value
+    qtr = Cells(2, 2).Value
+    
+    If groupname = "All" Then
+        Call searchAllRows(qtr, 8, 1370)
+    ElseIf groupname = "BCA" Then
+        Call searchAllRows(qtr, 8, 59)
+        Rows("60:1370").Select
+        Selection.EntireRow.Hidden = True
+    ElseIf groupname = "OPS" Then
+        Call searchAllRows(qtr, 60, 76)
+        Rows("8:59").Select
+        Selection.EntireRow.Hidden = True
+        Rows("77:1370").Select
+        Selection.EntireRow.Hidden = True
+    ElseIf groupname = "TSPM" Then
+        Call searchAllRows(qtr, 77, 78)
+        Rows("8:76").Select
+        Selection.EntireRow.Hidden = True
+        Rows("79:1370").Select
+        Selection.EntireRow.Hidden = True
+    ElseIf groupname = "GROW" Then
+        Call searchAllRows(qtr, 79, 149)
+        Rows("8:78").Select
+        Selection.EntireRow.Hidden = True
+        Rows("150:1370").Select
+        Selection.EntireRow.Hidden = True
+    ElseIf groupname = "CIN" Then
+        Call searchAllRows(qtr, 150, 171)
+        Rows("8:149").Select
+        Selection.EntireRow.Hidden = True
+        Rows("172:1370").Select
+        Selection.EntireRow.Hidden = True
+    ElseIf groupname = "CSTG" Then
+        Call searchAllRows(qtr, 172, 1197)
+        Rows("8:171").Select
+        Selection.EntireRow.Hidden = True
+        Rows("1198:1370").Select
+        Selection.EntireRow.Hidden = True
+    ElseIf groupname = "SWTG" Then
+        Call searchAllRows(qtr, 1198, 1320)
+        Rows("8:1197").Select
+        Selection.EntireRow.Hidden = True
+        Rows("1321:1370").Select
+        Selection.EntireRow.Hidden = True
+    ElseIf groupname = "OPS" Then
+        Call searchAllRows(qtr, 1321, 1370)
+        Rows("8:1320").Select
+        Selection.EntireRow.Hidden = True
+    End If
+    
+    
+End Sub
+Function searchRows(colVal As Double, qtr As String, rowVal1 As Double, rowVal2)
+
+    Dim nomlist As Range
+    Dim spgheir As Range
+    Set nomlist = Sheets("Nominee Info").Range("C2", Sheets("Nominee Info").Range("C65536").End(xlUp))
+    If rowVal = 65536 Then
+        Set spgheir = Range(Cells(8, colVal), Cells(65536, colVal).End(xlUp))
+    Else
+        Set spgheir = Range(Cells(rowVal1, colVal), Cells(rowVal2, colVal))
+    End If
+    Set qtrlist = Sheets("Nominee Info").Range("J2", Sheets("Nominee Info").Range("J65536").End(xlUp))
+    
+    If qtr = "All" Then
+        For i = 1 To nomlist.Count
+            For j = 1 To spgheir.Count
+                If IsEmpty(spgheir(j).Value) = False Then
+                    If nomlist(i).Value = spgheir(j).Value And IsEmpty(spgheir(j).Offset(0, 1).Value) = False Then
+                        spgheir(j).Offset(0, 1).Value = spgheir(j).Offset(0, 1).Value + 1
+                    ElseIf nomlist(i).Value = spgheir(j).Value And IsEmpty(spgheir(j).Offset(0, 1).Value) = True Then
+                        spgheir(j).Offset(0, 1).Value = 1
+                    ElseIf IsEmpty(spgheir(j).Offset(0, 1).Value) Then
+                        spgheir(j).Offset(0, 1).Value = 0
+                    End If
+                End If
+            Next
+        Next
+    Else
+        For i = 1 To nomlist.Count
+            For j = 1 To spgheir.Count
+                If IsEmpty(spgheir(j).Value) = False And qtrlist(j).Value = qtr Then
+                    If nomlist(i).Value = spgheir(j).Value And IsEmpty(spgheir(j).Offset(0, 1).Value) = False Then
+                        spgheir(j).Offset(0, 1).Value = spgheir(j).Offset(0, 1).Value + 1
+                    ElseIf nomlist(i).Value = spgheir(j).Value And IsEmpty(spgheir(j).Offset(0, 1).Value) = True Then
+                        spgheir(j).Offset(0, 1).Value = 1
+                    ElseIf IsEmpty(spgheir(j).Offset(0, 1).Value) Then
+                        spgheir(j).Offset(0, 1).Value = 0
+                    End If
+                End If
+            Next
+        Next
+    End If
+End Function
+Function searchAllRows(qtr As String, rowVal1 As Double, rowVal2)
+        Rows("8:1370").Select
+        Selection.EntireRow.Hidden = False
+        Call searchRows(2, qtr, rowVal1, rowVal2)
+        Call searchRows(4, qtr, rowVal1, rowVal2)
+        Call searchRows(6, qtr, rowVal1, rowVal2)
+        Call searchRows(8, qtr, rowVal1, rowVal2)
+        Call searchRows(10, qtr, rowVal1, rowVal2)
+        Call searchRows(12, qtr, rowVal1, rowVal2)
+End Function

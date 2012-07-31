@@ -1,0 +1,42 @@
+'   Herman Chin
+'   Individual Contributor report
+'
+'   Description: This macro generates a report for Individual contributors nominated
+'
+Sub ICRep()
+    'Report for Nominations By Managers
+' create title
+    Sheets("Nominee Info").Select
+    Rows("1:1").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Sheets("IC Nominations").Select
+    Rows("3:3").Select
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .ThemeColor = xlThemeColorLight2
+        .TintAndShade = 0.799981688894314
+        .PatternTintAndShade = 0
+    End With
+    Range("E2").Select
+    ActiveCell.FormulaR1C1 = "IC Nominations"
+    Rows("3:3").Select
+    Selection.AutoFilter
+' set variables
+
+    Dim submtr As Range
+    Set submtr = Sheets("Nominee Info").Range("K2", Sheets("Nominee Info").Range("K65536").End(xlUp))
+    For i = 1 To submtr.Count
+        If submtr(i).Value = "IC" Then
+                submtr(i).EntireRow.Copy
+                Sheets("IC Nominations").Select
+                ActiveSheet.Range("A65536").End(xlUp).Select
+                Selection.Offset(1, 0).Select
+                ActiveSheet.Paste
+        End If
+    Next
+
+End Sub

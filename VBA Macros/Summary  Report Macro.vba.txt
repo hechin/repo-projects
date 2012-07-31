@@ -1,0 +1,221 @@
+'   Herman Chin
+'   CAP Summary Macro
+'
+'   Description: This Macro compares two summary reports and displays the differences from each quarter and manager
+'
+
+Sub SumComp()
+' set title
+    Sheets("SummaryChanges").Activate
+    Cells.Select
+    Application.CutCopyMode = False
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    Selection.ClearContents
+    Sheets("Summary 1").Select
+    Range("E2:Q2").Select
+    Selection.Copy
+    Sheets("SummaryChanges").Select
+    Range("E4").Select
+    ActiveSheet.Paste
+    Cells(1, 8).Value = "New Lines Added in Detail 2 from Detail 1"
+    Cells(1, 8).Interior.color = RGB(245, 201, 201)
+    Cells(2, 8).Value = "Changes Made in Detail 2 from Detail 1"
+    Cells(2, 8).Interior.color = RGB(201, 245, 240)
+' set variables for sum2
+   Dim maheshR As Range, directrepR As Range, haddadR As Range, sunilR As Range, macklerR As Range
+   Dim raviR As Range, glennR As Range, yoriR As Range
+   Dim mahesh As Double, directrep As Double, haddad As Double, sunil As Double, mackler As Double
+   Dim ravi As Double, glenn As Double, yori As Double
+   Dim append As Double
+   mahesh = 3
+' set ranges for sum2
+   Set maheshR = Sheets("Summary 2").Range("B3", Sheets("Summary 2").Range("B3").End(xlDown))
+   directrep = maheshR.Count - 1 + mahesh
+   Set directrepR = Sheets("Summary 2").Range(Sheets("Summary 2").Cells(directrep, 2), Sheets("Summary 2").Cells(directrep, 2).End(xlDown))
+   haddad = directrepR.Count - 1 + directrep
+   Set haddadR = Sheets("Summary 2").Range(Sheets("Summary 2").Cells(haddad, 2), Sheets("Summary 2").Cells(haddad, 2).End(xlDown))
+   sunil = haddadR.Count - 1 + haddad
+   Set sunilR = Sheets("Summary 2").Range(Sheets("Summary 2").Cells(sunil, 2), Sheets("Summary 2").Cells(sunil, 2).End(xlDown))
+   mackler = sunilR.Count - 1 + sunil
+   Set macklerR = Sheets("Summary 2").Range(Sheets("Summary 2").Cells(mackler, 2), Sheets("Summary 2").Cells(mackler, 2).End(xlDown))
+   ravi = macklerR.Count - 1 + mackler
+   Set raviR = Sheets("Summary 2").Range(Sheets("Summary 2").Cells(ravi, 2), Sheets("Summary 2").Cells(ravi, 2).End(xlDown))
+   glenn = raviR.Count - 1 + ravi
+   Set glennR = Sheets("Summary 2").Range(Sheets("Summary 2").Cells(glenn, 2), Sheets("Summary 2").Cells(glenn, 2).End(xlDown))
+   yori = glennR.Count - 1 + glenn
+   Set yoriR = Sheets("Summary 2").Range(Sheets("Summary 2").Cells(yori, 5), Sheets("Summary 2").Cells(yori, 5).End(xlDown))
+   append = yoriR.Count - 1 + yori
+
+' set variables for sum1
+   Dim maheshR1 As Range, directrepR1 As Range, haddadR1 As Range, sunilR1 As Range, macklerR1 As Range
+   Dim raviR1 As Range, glennR1 As Range, yoriR1 As Range
+   Dim mahesh1 As Double, directrep1 As Double, haddad1 As Double, sunil1 As Double, mackler1 As Double
+   Dim ravi1 As Double, glenn1 As Double, yori1 As Double
+   Dim append1 As Double
+   mahesh1 = 3
+' set ranges for sum1
+   Set maheshR1 = Sheets("Summary 1").Range("B3", Sheets("Summary 1").Range("B3").End(xlDown))
+   directrep1 = maheshR1.Count - 1 + mahesh1
+   Set directrepR1 = Sheets("Summary 1").Range(Sheets("Summary 1").Cells(directrep1, 2), Sheets("Summary 1").Cells(directrep1, 2).End(xlDown))
+   haddad1 = directrepR1.Count - 1 + directrep1
+   Set haddadR1 = Sheets("Summary 1").Range(Sheets("Summary 1").Cells(haddad1, 2), Sheets("Summary 1").Cells(haddad1, 2).End(xlDown))
+   sunil1 = haddadR1.Count - 1 + haddad1
+   Set sunilR1 = Sheets("Summary 1").Range(Sheets("Summary 1").Cells(sunil1, 2), Sheets("Summary 1").Cells(sunil1, 2).End(xlDown))
+   mackler1 = sunilR1.Count - 1 + sunil1
+   Set macklerR1 = Sheets("Summary 1").Range(Sheets("Summary 1").Cells(mackler1, 2), Sheets("Summary 1").Cells(mackler1, 2).End(xlDown))
+   ravi1 = macklerR1.Count - 1 + mackler1
+   Set raviR1 = Sheets("Summary 1").Range(Sheets("Summary 1").Cells(ravi1, 2), Sheets("Summary 1").Cells(ravi1, 2).End(xlDown))
+   glenn1 = raviR1.Count - 1 + ravi1
+   Set glennR1 = Sheets("Summary 1").Range(Sheets("Summary 1").Cells(glenn1, 2), Sheets("Summary 1").Cells(glenn1, 2).End(xlDown))
+   yori1 = glennR1.Count - 1 + glenn1
+   Set yoriR1 = Sheets("Summary 1").Range(Sheets("Summary 1").Cells(yori1, 5), Sheets("Summary 1").Cells(yori1, 5).End(xlDown))
+   append1 = yoriR1.Count - 1 + yori1
+   
+   Worksheets("SummaryChanges").Activate
+' set variables for compare
+   Dim founded As Double
+' compare mahesh
+   Sheets("SummaryChanges").Activate
+   Cells(5, 1).Value = "Bhumralkar, Mahesh C."
+   Cells(5, 5).Value = "-"
+   For i = mahesh To directrep - 1
+     founded = 0 ' new line
+     For j = mahesh1 To directrep1 - 1
+       If Sheets("Summary 2").Cells(i, 5) = Sheets("Summary 1").Cells(j, 5) Then
+         founded = 1 ' no change
+         For k = 5 To 17
+            If Sheets("Summary 2").Cells(i, k) <> Sheets("Summary 1").Cells(j, k) Then
+                founded = 2 ' change made
+            End If
+         Next
+       End If
+' set conditions if change found = 1 or not found = 0
+       If founded = 2 Then
+         Range("E65536").End(xlUp).Select
+         Selection.Offset(1, 0).Select
+         For n = 5 To 17
+             ActiveCell.Value = Sheets("Summary 2").Cells(i, n).Value
+             If Sheets("Summary 2").Cells(i, n) <> Sheets("Summary 1").Cells(j, n) Then
+                 ActiveCell.Value = Sheets("Summary 2").Cells(i, n).Value - Sheets("Summary 1").Cells(j, n).Value
+                 ActiveCell.Interior.color = RGB(201, 245, 240)
+             End If
+             Selection.Offset(0, 1).Select
+         Next
+         founded = 1
+       End If
+     Next
+     If founded = 0 Then
+         Range("E65536").End(xlUp).Select
+         Selection.Offset(1, 0).Select
+         For n = 5 To 17
+            ActiveCell.Value = Sheets("Summary 2").Cells(i, n)
+            Selection.Offset(0, 1).Select
+         Next
+         ActiveCell.EntireRow.Interior.color = RGB(245, 201, 201)
+     End If
+   Next
+' set directrep
+    Call compareIt("Direct Reports", directrep, haddad, directrep1, haddad1)
+' set haddad
+    Call compareIt("Haddad, Richard S.", haddad, sunil, haddad1, sunil1)
+' set sunil
+    Call compareIt("Kripalani, Sunil", sunil, mackler, sunil1, mackler1)
+' set mackler
+    Call compareIt("Mackler, David", mackler, ravi, mackler1, ravi1)
+' set ravi
+    Call compareIt("Ravishankar, Swaminathan", ravi, glenn, ravi1, glenn1)
+' set glenn
+    Call compareIt("Schleicher, Glenn J", glenn, yori, glenn1, yori1)
+' set yori
+    Call compareIt("Yoritaka, Tom", yori, append, yori1, append1)
+' set grand total
+    Call grandtotal
+End Sub
+Function compareIt(named As String, range1 As Double, range12 As Double, range2 As Double, range22 As Double)
+' set name
+   Range("E65536").Activate
+   Selection.End(xlUp).Offset(1, -4).Select
+   Selection.Value = named
+   Selection.Offset(0, 4).Value = "-"
+' compare sheets
+   For i = range1 To range12 - 1
+     founded = 0 ' new line
+     For j = range2 To range22 - 1
+       If Sheets("Summary 2").Cells(i, 5) = Sheets("Summary 1").Cells(j, 5) Then
+         founded = 1 ' no change
+         For k = 5 To 17
+            If Sheets("Summary 2").Cells(i, k) <> Sheets("Summary 1").Cells(j, k) Then
+                founded = 2 ' change made
+            End If
+         Next
+       End If
+' set conditions if found = 1 or not found = 0
+       If founded = 2 Then
+         Range("E65536").End(xlUp).Select
+         Selection.Offset(1, 0).Select
+         For n = 5 To 17
+             ActiveCell.Value = Sheets("Summary 2").Cells(i, n).Value
+             If Sheets("Summary 2").Cells(i, n) <> Sheets("Summary 1").Cells(j, n) Then
+                 ActiveCell.Value = Sheets("Summary 2").Cells(i, n).Value - Sheets("Summary 1").Cells(j, n).Value
+                 ActiveCell.Interior.color = RGB(201, 245, 240)
+             End If
+             Selection.Offset(0, 1).Select
+         Next
+         founded = 1
+       End If
+     Next
+     If founded = 0 Then
+         Range("E65536").End(xlUp).Select
+         Selection.Offset(1, 0).Select
+         For n = 5 To 17
+            ActiveCell.Value = Sheets("Summary 2").Cells(i, n)
+            Selection.Offset(0, 1).Select
+         Next
+         ActiveCell.EntireRow.Interior.color = RGB(245, 201, 201)
+     End If
+   Next
+End Function
+Function grandtotal()
+    Dim g1 As Range
+    Dim g2 As Range
+    
+    Set g1 = Range(Sheets("Summary 1").Range("A65536").End(xlUp).Offset(0, 1), Sheets("Summary 1").Range("A65536").End(xlUp).Offset(0, 12))
+    Set g2 = Range(Sheets("Summary 2").Range("A65536").End(xlUp).Offset(0, 1), Sheets("Summary 2").Range("A65536").End(xlUp).Offset(0, 12))
+
+    Range("E65536").End(xlUp).Select
+    Selection.Offset(2, -4).Select
+    
+    ActiveCell.Value = "Summary 1 Grand Total"
+    ActiveCell.EntireRow.Interior.color = RGB(135, 245, 169)
+    Selection.Offset(0, 5).Select
+    For i = 1 To g1.Count
+        ActiveCell.Value = g1(i).Value
+        Selection.Offset(0, 1).Select
+    Next
+    Range("A65536").End(xlUp).Select
+    Selection.Offset(1, 0).Select
+    ActiveCell.Value = "Summary 2 Grand Total"
+    ActiveCell.EntireRow.Interior.color = RGB(135, 245, 169)
+    Selection.Offset(0, 5).Select
+    For i = 1 To g2.Count
+        ActiveCell.Value = g2(i).Value
+        Selection.Offset(0, 1).Select
+    Next
+    Range("A65536").End(xlUp).Select
+    Selection.Offset(1, 0).Select
+    ActiveCell.Value = "Grand Total Difference"
+    ActiveCell.EntireRow.Interior.color = RGB(204, 255, 51)
+    Selection.Offset(0, 5).Select
+    For i = 1 To g2.Count
+        If g1(i).Value <> g2(i).Value Then
+            ActiveCell.Value = g2(i).Value - g1(i).Value
+        Else
+            ActiveCell.Value = 0
+        End If
+        Selection.Offset(0, 1).Select
+    Next
+End Function

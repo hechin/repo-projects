@@ -1,0 +1,114 @@
+'   Herman Chin
+'   Details Comparison
+'
+'   Description: This macro compares the detailed earnings and spendings used by each manager and group and shows the differences from each quarter
+'
+'
+
+Sub DetailComp()
+' set variables
+   Dim clearrange As Range
+   Dim det1 As Range
+   Dim det2 As Range
+   Dim det2lenR As Range
+   Dim det1lenR As Range
+   Dim notexist As Integer, det1len As Integer, det2len As Integer
+   Dim printdifcounter As Integer, detchangesRC As Integer, detchangesCC As Integer
+    
+   Set det1lenR = Worksheets("Detail 1").Range("A2", Worksheets("Detail 1").Range("A65536").End(xlUp))
+   Set det2lenR = Worksheets("Detail 2").Range("A2", Worksheets("Detail 2").Range("A65536").End(xlUp))
+   Set det1 = Worksheets("Detail 1").Range("A557", Worksheets("Detail 1").Range("AB557"))
+   Set det2 = Worksheets("Detail 2").Range("A543", Worksheets("Detail 2").Range("AB543"))
+   det1len = det1lenR.Count
+   det2len = det2lenR.Count
+   detchangesRC = 5
+   detchangesCC = 1
+   notexist = 1
+   
+   Sheets("DetailChanges").Activate
+   Worksheets("DetailChanges").UsedRange.Clear
+   Cells.Select
+   With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+   End With
+' add titles and legend
+   Worksheets("Detail 2").Activate
+   Range("A1:AB1").Select
+   Selection.Copy
+   Sheets("DetailChanges").Select
+   Range("A4").Select
+   ActiveSheet.Paste
+   Application.CutCopyMode = False
+   Selection.AutoFilter
+   Cells(1, 8).Value = "New Lines Added in Detail 2 from Detail 1"
+   Cells(1, 8).Interior.color = RGB(245, 201, 201)
+   Cells(2, 8).Value = "Changes Made in Detail 2 from Detail 1"
+   Cells(2, 8).Interior.color = RGB(201, 245, 240)
+   
+   For i = 1 To det2len ' go through every line in detail list 2
+    notexist = 1
+    For j = 1 To det1len ' and compare with every line in detail list 1
+        printdifcounter = 0
+        If Worksheets("Detail 2").Cells(i, 19).Value = Worksheets("Detail 1").Cells(j, 19).Value Then
+            For k = 1 To 28 ' go through the row if the ID is the same and see if its different
+                If Worksheets("Detail 2").Cells(i, k).Value <> Worksheets("Detail 1").Cells(j, k).Value Then
+                    printdifcounter = 1
+                End If
+            Next
+            If printdifcounter = 1 Then ' if the cap ID exists and is different
+                For n = 1 To 28
+                    Worksheets("DetailChanges").Cells(detchangesRC, detchangesCC).Value = Worksheets("Detail 2").Cells(i, n).Value
+                    If Worksheets("Detail 2").Cells(i, n).Value = Worksheets("Detail 1").Cells(j, n).Value Then
+                        Worksheets("DetailChanges").Cells(detchangesRC, detchangesCC).Interior.color = RGB(201, 245, 240)
+                    End If
+                    detchangesCC = detchangesCC + 1
+                Next
+                detchangesCC = 1
+                detchangesRC = detchangesRC + 1
+            End If
+            ' existence counter = exists if found
+            If notexist = 1 Then
+                notexist = 0
+            End If
+        End If
+    Next
+' if cant find detail 2 row in detail 1 then add new row and highlight in red
+    If notexist = 1 Then
+        Worksheets("Detail 2").Cells(i, 1).EntireRow.Copy
+        Sheets("DetailChanges").Select
+        ActiveSheet.Range("A65536").End(xlUp).Offset(1, 0).Select
+        ActiveSheet.Paste
+        ActiveCell.EntireRow.Interior.color = RGB(245, 201, 201)
+        detchangesRC = detchangesRC + 1
+    End If
+   Next
+   Call diff
+End Sub
+Function diff()
+    Dim d1 As Range
+    Dim d2 As Range
+    Dim d1sum As Double, d2sum As Double
+    
+    Set d1 = Sheets("Detail 1").Range("G2", Worksheets("Detail 1").Range("G2").End(xlDown))
+    Set d2 = Sheets("Detail 2").Range("G2", Worksheets("Detail 2").Range("G2").End(xlDown))
+  
+    d1sum = Application.WorksheetFunction.Sum(d1)
+    d2sum = Application.WorksheetFunction.Sum(d2)
+    
+    Range("A65536").End(xlUp).Offset(3, 0).Select
+    ActiveCell.Value = "Detail 1"
+    Selection.Offset(0, 1).Select
+    ActiveCell.Value = d1sum
+    Selection.Offset(1, 0).Select
+    ActiveCell.Value = d2sum
+    Selection.Offset(0, -1).Select
+    ActiveCell.Value = "Detail 2"
+    Selection.Offset(1, 0).Select
+    ActiveCell.Value = "Diff"
+    Selection.Offset(0, 1).Select
+    ActiveCell.Value = d2sum - d1sum
+    
+End Function
+
